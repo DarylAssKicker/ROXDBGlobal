@@ -3,7 +3,7 @@ const XLSX = require('xlsx');
 const path = require('path');
 
 // 读取Excel文件
-const excelPath = path.join(__dirname, 'game/langs.xlsx');
+const excelPath = path.join(__dirname, 'i18n/langs.xlsx');
 const workbook = XLSX.readFile(excelPath);
 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 const data = XLSX.utils.sheet_to_json(worksheet);
