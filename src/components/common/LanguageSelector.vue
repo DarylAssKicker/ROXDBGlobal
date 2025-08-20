@@ -4,7 +4,6 @@
       @click="isOpen = !isOpen"
       class="flex items-center space-x-2 px-3 py-2 text-white hover:bg-white/10 rounded-lg transition-colors"
     >
-      <span class="text-lg">{{ currentLanguage?.flag }}</span>
       <span class="hidden md:block">{{ currentLanguage?.label }}</span>
       <ChevronDownIcon class="h-4 w-4" />
     </button>
@@ -29,7 +28,6 @@
           class="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors"
           :class="{ 'bg-primary-50 text-primary-600': language.value === currentLocale }"
         >
-          <span class="text-lg">{{ language.flag }}</span>
           <span class="font-medium">{{ language.label }}</span>
           <CheckIcon 
             v-if="language.value === currentLocale" 

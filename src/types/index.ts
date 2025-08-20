@@ -163,7 +163,6 @@ export interface LoadingState {
 export interface Language {
   value: string
   label: string
-  flag: string
 }
 
 // 路由Meta类型

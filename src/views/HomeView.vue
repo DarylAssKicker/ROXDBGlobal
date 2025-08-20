@@ -20,24 +20,44 @@
       </div>
     </div>
     
-    <!-- 功能特色 -->
+    <!-- 协作者信息 -->
     <div class="card p-6">
       <h2 class="text-2xl font-bold text-gray-900 mb-6">
-        {{ $t('home.features') }}
+        Collaborators
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div
-          v-for="feature in features"
-          :key="feature.key"
-          class="text-center p-6 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <component :is="feature.icon" class="h-12 w-12 text-primary-500 mx-auto mb-4" />
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">
-            {{ $t(`home.${feature.key}`) }}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- 程序员 -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <UserIcon class="h-5 w-5 mr-2 text-primary-500" />
+            Programmer
           </h3>
-          <p class="text-gray-600">
-            {{ $t(`home.${feature.key}Desc`) }}
-          </p>
+          <div class="space-y-2">
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-primary-500 rounded-full"></div>
+              <span class="text-gray-700 font-medium">DarylAssKicker</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 翻译者 -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <GlobeAltIcon class="h-5 w-5 mr-2 text-primary-500" />
+            Translator
+          </h3>
+          <div class="space-y-2">
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span class="text-gray-600 text-sm">en-US:</span>
+              <span class="text-gray-700 font-medium">Natsu</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-gray-600 text-sm">pt-BR:</span>
+              <span class="text-gray-700 font-medium">Andyz0x</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -116,10 +136,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { 
-  ComputerDesktopIcon,
   GlobeAltIcon,
-  DevicePhoneMobileIcon,
-  MagnifyingGlassIcon,
   UserGroupIcon,
   RectangleStackIcon,
   SparklesIcon,
@@ -139,12 +156,7 @@ const dataStore = useDataStore()
 
 const currentLanguage = computed(() => i18nStore.currentLanguage)
 
-const features = [
-  { key: 'modernUI', icon: ComputerDesktopIcon },
-  { key: 'multiLanguage', icon: GlobeAltIcon },
-  { key: 'responsive', icon: DevicePhoneMobileIcon },
-  { key: 'fastSearch', icon: MagnifyingGlassIcon }
-]
+
 
 const quickAccessItems = [
   { 

@@ -4,14 +4,15 @@ import type { I18nOptions } from 'vue-i18n'
 // 导入语言包
 import zhCN from './locales/zh-CN.json'
 import enUS from './locales/en-US.json'
-import esES from './locales/es-ES.json'
-import jaJP from './locales/ja-JP.json'
-import ptPT from './locales/pt-PT.json'
+// import esES from './locales/es-ES.json'
+// import jaJP from './locales/ja-JP.json'
+import ptBR from './locales/pt-BR.json'
 
 // 支持的语言列表
 export const SUPPORTED_LOCALES = [
-  { value: 'en-US', label: 'English', flag: '🇺🇸' },
-  { value: 'zh-CN', label: '简体中文', flag: '🇨🇳' }
+  { value: 'en-US', label: 'English' },
+  { value: 'zh-CN', label: '简体中文' },
+  { value: 'pt-BR', label: 'Português' }
 ]
 
 // 获取浏览器默认语言
@@ -34,11 +35,11 @@ const options: I18nOptions = {
   locale: getDefaultLocale(),
   fallbackLocale: 'en-US',
   messages: {
-    'zh-CN': zhCN,
     'en-US': enUS,
-    'es-ES': esES,
-    'ja-JP': jaJP,
-    'pt-PT': ptPT
+    'zh-CN': zhCN,
+    // 'es-ES': esES,
+    // 'ja-JP': jaJP,
+    'pt-BR': ptBR
   },
   globalInjection: true,
   warnHtmlMessage: false
