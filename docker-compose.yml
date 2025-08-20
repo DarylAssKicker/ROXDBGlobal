@@ -13,6 +13,10 @@ services:
       - NODE_ENV=production
     networks:
       - rox-network
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf 
+      - ./roxdb.games_nginx/roxdb.games_bundle.crt:/usr/share/nginx/roxdb.games_bundle.crt
+      - ./roxdb.games_nginx/roxdb.games.key:/usr/share/nginx/roxdb.games.key
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
       interval: 30s
