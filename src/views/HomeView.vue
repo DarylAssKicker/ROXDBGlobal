@@ -1,12 +1,13 @@
 <template>
   <div class="space-y-8">
     <!-- 欢迎区域 -->
-    <div class="card p-8 text-center">
-      <div class="max-w-3xl mx-auto">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+    <div class="card p-8 text-center bg-cover bg-center bg-no-repeat relative" style="background-image: url('/images/banner.jpg')">
+      <div class="absolute inset-0 bg-black bg-opacity-40 rounded-lg"></div>
+      <div class="max-w-3xl mx-auto relative z-10">
+        <h1 class="text-4xl font-bold text-white mb-4">
           {{ $t('home.welcome') }}
         </h1>
-        <p class="text-xl text-gray-600 mb-8">
+        <p class="text-xl text-gray-200 mb-8">
           {{ $t('home.description') }}
         </p>
         <div class="flex items-center justify-center space-x-4">
@@ -36,6 +37,10 @@
             <div class="flex items-center space-x-3">
               <div class="w-2 h-2 bg-primary-500 rounded-full"></div>
               <span class="text-gray-700 font-medium">DarylAssKicker</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-gray-600 text-sm">If you want to help with the translation, please contact me on DC: daryl_48373_78664</span>
             </div>
           </div>
         </div>
