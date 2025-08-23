@@ -385,17 +385,17 @@ const visiblePages = computed(() => {
   const total = totalPages.value
   const current = currentPage.value
   const delta = 2
-  const range = []
+  const range: (number | string)[] = []
   
   for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
     range.push(i)
   }
   
   if (current - delta > 2) {
-    range.unshift('...' as any)
+    range.unshift('...')
   }
   if (current + delta < total - 1) {
-    range.push('...' as any)
+    range.push('...')
   }
   
   range.unshift(1)
