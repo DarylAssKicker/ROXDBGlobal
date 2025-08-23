@@ -16,6 +16,7 @@
     "language": "Language",
     "theme": "Theme",
     "noData": "No Data",
+    "adjustFilters": "Please adjust filter conditions",
     "error": "Error Occurred",
     "success": "Success",
     "total": "Total {count} items",
@@ -98,6 +99,36 @@
       "effect": "Effect"
     },
     "equipSlots": "Equipment Slots Guide"
+  },
+  "enchant": {
+    "title": "Enchant Database",
+    "description": "View enchant effects and required materials for each city",
+    "filters": {
+      "city": "City",
+      "position": "Equipment Position",
+      "attribute": "Attribute",
+      "pageSize": "Items per page",
+      "selectCity": "All Cities",
+      "selectPosition": "All Positions",
+      "searchAttribute": "Search attribute name..."
+    },
+    "columns": {
+      "city": "City",
+      "position": "Position",
+      "attribute": "Attribute",
+      "white": "White",
+      "blue": "Blue",
+      "purple": "Purple",
+      "orange": "Orange",
+      "costItems": "Material Cost"
+    },
+    "stats": {
+      "total": "Total",
+      "filtered": "Filtered Results",
+      "cities": "Cities",
+      "items": "enchants",
+      "cityCount": ""
+    }
   },
   "game": {
     "Race1": "Angel",

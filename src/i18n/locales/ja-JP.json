@@ -16,6 +16,7 @@
     "language": "言語",
     "theme": "テーマ",
     "noData": "データなし",
+    "adjustFilters": "フィルター条件を調整してください",
     "error": "エラー",
     "success": "成功",
     "total": "合計 {count} 件",
@@ -58,6 +59,36 @@
       "race": "種族",
       "baseExp": "ベース経験値",
       "jobExp": "ジョブ経験値"
+    }
+  },
+  "enchant": {
+    "title": "エンチャントデータベース",
+    "description": "各都市のエンチャント効果と必要素材を表示",
+    "filters": {
+      "city": "都市",
+      "position": "装備部位",
+      "attribute": "属性",
+      "pageSize": "1ページあたりの項目数",
+      "selectCity": "すべての都市",
+      "selectPosition": "すべての部位",
+      "searchAttribute": "属性名を検索..."
+    },
+    "columns": {
+      "city": "都市",
+      "position": "装備部位",
+      "attribute": "属性",
+      "white": "白",
+      "blue": "蓝",
+      "purple": "紫",
+      "orange": "橙",
+      "costItems": "素材コスト"
+    },
+    "stats": {
+      "total": "合計",
+      "filtered": "フィルター結果",
+      "cities": "都市",
+      "items": "エンチャント",
+      "cityCount": "個"
     }
   },
   "game": {

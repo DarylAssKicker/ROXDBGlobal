@@ -16,6 +16,7 @@
     "language": "Idioma",
     "theme": "Tema",
     "noData": "Sem Dados",
+    "adjustFilters": "Por favor, ajuste as condições do filtro",
     "error": "Erro",
     "success": "Sucesso",
     "total": "Total {count} itens",
@@ -58,6 +59,36 @@
       "race": "Raça",
       "baseExp": "EXP Base",
       "jobExp": "EXP Trabalho"
+    }
+  },
+  "enchant": {
+    "title": "Base de Dados de Encantamentos",
+    "description": "Ver efeitos de encantamento e materiais necessários para cada cidade",
+    "filters": {
+      "city": "Cidade",
+      "position": "Posição do Equipamento",
+      "attribute": "Atributo",
+      "pageSize": "Itens por página",
+      "selectCity": "Todas as Cidades",
+      "selectPosition": "Todas as Posições",
+      "searchAttribute": "Pesquisar nome do atributo..."
+    },
+    "columns": {
+      "city": "Cidade",
+      "position": "Posição",
+      "attribute": "Atributo",
+      "white": "Branco",
+      "blue": "Azul",
+      "purple": "Roxo",
+      "orange": "Laranja",
+      "costItems": "Custo de Material"
+    },
+    "stats": {
+      "total": "Total",
+      "filtered": "Resultados Filtrados",
+      "cities": "Cidades",
+      "items": "encantamentos",
+      "cityCount": ""
     }
   },
   "game": {

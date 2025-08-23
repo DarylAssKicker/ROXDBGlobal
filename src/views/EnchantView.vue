@@ -5,42 +5,42 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 2xl:grid-cols-7 gap-3 items-end">
         <!-- 城市筛选 -->
         <div class="space-y-1">
-          <label class="block text-xs font-medium text-gray-700">城市</label>
+          <label class="block text-xs font-medium text-gray-700">{{ $t('enchant.filters.city') }}</label>
           <select 
             v-model="selectedCity" 
             class="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="">全部城市</option>
+            <option value="">{{ $t('enchant.filters.selectCity') }}</option>
             <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
           </select>
         </div>
 
         <!-- 装备位置筛选 -->
         <div class="space-y-1">
-          <label class="block text-xs font-medium text-gray-700">装备位置</label>
+          <label class="block text-xs font-medium text-gray-700">{{ $t('enchant.filters.position') }}</label>
           <select 
             v-model="selectedPosition" 
             class="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="">全部位置</option>
+            <option value="">{{ $t('enchant.filters.selectPosition') }}</option>
             <option v-for="position in positions" :key="position" :value="position">{{ position }}</option>
           </select>
         </div>
 
         <!-- 属性搜索 -->
         <div class="space-y-1">
-          <label class="block text-xs font-medium text-gray-700">属性</label>
+          <label class="block text-xs font-medium text-gray-700">{{ $t('enchant.filters.attribute') }}</label>
           <input 
             v-model="searchAttribute" 
             type="text" 
-            placeholder="搜索属性名称..." 
+:placeholder="$t('enchant.filters.searchAttribute')" 
             class="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         <!-- 每页显示数量 -->
         <div class="space-y-1">
-          <label class="block text-xs font-medium text-gray-700">每页显示</label>
+          <label class="block text-xs font-medium text-gray-700">{{ $t('enchant.filters.pageSize') }}</label>
           <select 
             v-model="pageSize" 
             @change="goToPage(1)" 
@@ -59,7 +59,7 @@
             @click="resetFilters" 
             class="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500 transition-colors"
           >
-            重置
+            {{ $t('common.reset') }}
           </button>
         </div>
       </div>
@@ -81,25 +81,25 @@
         
         <div class="grid grid-cols-2 gap-2 mb-3">
           <div class="text-center">
-            <div class="text-xs text-gray-500 mb-1">白色</div>
+            <div class="text-xs text-gray-500 mb-1">{{ $t('enchant.columns.white') }}</div>
             <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
               {{ enchant.white }}
             </span>
           </div>
           <div class="text-center">
-            <div class="text-xs text-gray-500 mb-1">绿色</div>
-            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-              {{ enchant.green }}
+            <div class="text-xs text-gray-500 mb-1">{{ $t('enchant.columns.blue') }}</div>
+            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+              {{ enchant.blue }}
             </span>
           </div>
           <div class="text-center">
-            <div class="text-xs text-gray-500 mb-1">紫色</div>
+            <div class="text-xs text-gray-500 mb-1">{{ $t('enchant.columns.purple') }}</div>
             <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
               {{ enchant.purple }}
             </span>
           </div>
           <div class="text-center">
-            <div class="text-xs text-gray-500 mb-1">橙色</div>
+            <div class="text-xs text-gray-500 mb-1">{{ $t('enchant.columns.orange') }}</div>
             <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-100 text-orange-800">
               {{ enchant.orange }}
             </span>
@@ -107,7 +107,7 @@
         </div>
         
         <div class="pt-3 border-t border-gray-200">
-          <div class="text-xs text-gray-500 mb-1">材料消耗</div>
+          <div class="text-xs text-gray-500 mb-1">{{ $t('enchant.columns.costItems') }}</div>
           <div class="text-sm text-gray-700">{{ enchant.cost_items }}</div>
         </div>
       </div>
@@ -117,39 +117,43 @@
     <div class="hidden lg:block card overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full">
-          <thead class="bg-gray-50">
+          <thead class="table-header">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-24" @click="sortBy('city')">
-                城市
-                <span class="ml-1" v-if="sortField === 'city'">
-                  {{ sortDirection === 'asc' ? '↑' : '↓' }}
-                </span>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider cursor-pointer w-24" @click="sortBy('city')">
+                <div class="flex items-center justify-center space-x-1">
+                  <span>{{ $t('enchant.columns.city') }}</span>
+                  <span class="ml-1" v-if="sortField === 'city'">
+                    {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                  </span>
+                </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">装备位置</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-28" @click="sortBy('attribute')">
-                属性
-                <span class="ml-1" v-if="sortField === 'attribute'">
-                  {{ sortDirection === 'asc' ? '↑' : '↓' }}
-                </span>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider w-32">{{ $t('enchant.columns.position') }}</th>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider cursor-pointer w-28" @click="sortBy('attribute')">
+                <div class="flex items-center justify-center space-x-1">
+                  <span>{{ $t('enchant.columns.attribute') }}</span>
+                  <span class="ml-1" v-if="sortField === 'attribute'">
+                    {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                  </span>
+                </div>
               </th>
-              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">白色</th>
-              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">绿色</th>
-              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">紫色</th>
-              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">橙色</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">材料消耗</th>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider w-20">{{ $t('enchant.columns.white') }}</th>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider w-20">{{ $t('enchant.columns.blue') }}</th>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider w-20">{{ $t('enchant.columns.purple') }}</th>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider w-20">{{ $t('enchant.columns.orange') }}</th>
+              <th class="px-6 py-3 text-center text-xs font-medium tracking-wider">{{ $t('enchant.columns.costItems') }}</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr v-for="enchant in paginatedEnchants" :key="enchant.id" class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap w-24">
+              <td class="px-6 py-4 whitespace-nowrap text-center w-24">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" :class="getCityColor(enchant.city)">
                   {{ enchant.city }}
                 </span>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-900 w-32">
+              <td class="px-6 py-4 text-sm text-gray-900 text-center w-32">
                 <div class="break-words whitespace-normal">{{ enchant.position }}</div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap w-28">
+              <td class="px-6 py-4 whitespace-nowrap text-center w-28">
                 <span class="text-sm font-medium text-gray-900">{{ enchant.attribute }}</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-center w-20">
@@ -158,8 +162,8 @@
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-center w-20">
-                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                  {{ enchant.green }}
+                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                  {{ enchant.blue }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-center w-20">
@@ -172,7 +176,7 @@
                   {{ enchant.orange }}
                 </span>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-500">
+              <td class="px-6 py-4 text-sm text-gray-500 text-center">
                 <div class="max-w-sm break-words whitespace-normal leading-tight" :title="enchant.cost_items">
                   {{ enchant.cost_items }}
                 </div>
@@ -186,14 +190,14 @@
     <!-- 空状态 -->
     <div v-if="!loading && filteredEnchants.length === 0" class="card text-center py-12">
       <SparklesIcon class="h-12 w-12 mx-auto text-gray-400 mb-4" />
-      <h3 class="text-sm font-medium text-gray-900 mb-2">没有找到匹配的附魔</h3>
-      <p class="text-sm text-gray-500">请调整筛选条件</p>
+      <h3 class="text-sm font-medium text-gray-900 mb-2">{{ $t('common.noData') }}</h3>
+      <p class="text-sm text-gray-500">{{ $t('common.adjustFilters') }}</p>
     </div>
 
     <!-- 加载状态 -->
     <div v-if="loading" class="card text-center py-12">
       <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
-      <p class="text-sm text-gray-500">加载中...</p>
+      <p class="text-sm text-gray-500">{{ $t('common.loading') }}</p>
     </div>
 
     <!-- 分页控件 -->
@@ -254,6 +258,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { SparklesIcon } from '@heroicons/vue/24/outline'
+import { useI18nStore } from '@/stores/i18n'
 
 interface EnchantData {
   id: number
@@ -261,11 +266,14 @@ interface EnchantData {
   position: string
   attribute: string
   white: string
-  green: string
+  blue: string
   purple: string
   orange: string
   cost_items: string
 }
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 // 响应式数据
 const enchants = ref<EnchantData[]>([])
@@ -286,10 +294,22 @@ const sortDirection = ref<'asc' | 'desc'>('asc')
 const loadEnchants = async () => {
   try {
     loading.value = true
-    const response = await fetch('/src/data/enchant.json')
+    // 根据当前语言加载对应的数据文件
+    const locale = i18nStore.currentLocale
+    const dataPath = `/src/data/enchant/${locale}.json`
+    
+    let response = await fetch(dataPath)
+    
+    // 如果当前语言的数据文件不存在，回退到中文
+    if (!response.ok && locale !== 'zh-CN') {
+      console.warn(`Enchant data for ${locale} not found, falling back to zh-CN`)
+      response = await fetch('/src/data/enchant/zh-CN.json')
+    }
+    
     if (!response.ok) {
       throw new Error('Failed to load enchant data')
     }
+    
     const data = await response.json()
     enchants.value = data
   } catch (error) {
@@ -301,8 +321,10 @@ const loadEnchants = async () => {
 
 // 计算属性 - 获取所有城市（按配置表顺序）
 const cities = computed(() => {
-  // 定义城市的显示顺序（按配置表中出现的顺序）
-  const cityOrder = ['普隆德拉', '依斯鲁得', '梦洛克', '艾尔贝塔', '斐扬', '吉芬']
+  // 定义城市的显示顺序（支持多语言）
+  const cityOrder = i18nStore.currentLocale === 'zh-CN' 
+    ? ['普隆德拉', '依斯鲁得', '梦洛克', '艾尔贝塔', '斐扬', '吉芬']
+    : ['Prontera', 'Izlude', 'Morocc', 'Alberta', 'Payon', 'Geffen']
   
   const citySet = new Set(enchants.value.map(e => e.city))
   const availableCities = Array.from(citySet)
@@ -387,12 +409,21 @@ const visiblePages = computed(() => {
 // 获取城市对应的颜色样式
 const getCityColor = (city: string) => {
   const cityColors = {
+    // 中文城市名
     '普隆德拉': 'bg-blue-100 text-blue-800',      // 蓝色 - 首都
     '依斯鲁得': 'bg-green-100 text-green-800',    // 绿色 - 沙漠城市  
     '梦洛克': 'bg-purple-100 text-purple-800',     // 紫色 - 魔法城市
     '艾尔贝塔': 'bg-indigo-100 text-indigo-800',  // 靛蓝 - 港口城市
     '斐扬': 'bg-orange-100 text-orange-800',       // 橙色 - 森林城市
-    '吉芬': 'bg-red-100 text-red-800'             // 红色 - 工业城市
+    '吉芬': 'bg-red-100 text-red-800',            // 红色 - 工业城市
+    
+    // 英文城市名
+    'Prontera': 'bg-blue-100 text-blue-800',      // 蓝色 - 首都
+    'Izlude': 'bg-green-100 text-green-800',      // 绿色 - 沙漠城市  
+    'Morocc': 'bg-purple-100 text-purple-800',    // 紫色 - 魔法城市
+    'Alberta': 'bg-indigo-100 text-indigo-800',   // 靛蓝 - 港口城市
+    'Payon': 'bg-orange-100 text-orange-800',     // 橙色 - 森林城市
+    'Geffen': 'bg-red-100 text-red-800'          // 红色 - 工业城市
   }
   return cityColors[city as keyof typeof cityColors] || 'bg-gray-100 text-gray-800'
 }
@@ -428,6 +459,11 @@ watch([selectedCity, selectedPosition, searchAttribute], () => {
 
 // 页面加载时获取数据
 onMounted(() => {
+  loadEnchants()
+})
+
+// 监听语言变化，重新加载数据
+watch(() => i18nStore.currentLocale, () => {
   loadEnchants()
 })
 </script>

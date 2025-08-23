@@ -16,6 +16,7 @@
     "language": "语言",
     "theme": "主题",
     "noData": "暂无数据",
+    "adjustFilters": "请调整筛选条件",
     "error": "出现错误",
     "success": "操作成功",
     "total": "共 {count} 条",
@@ -99,6 +100,36 @@
       "effect": "效果"
     },
     "equipSlots": "装备孔洞说明"
+  },
+  "enchant": {
+    "title": "附魔资料",
+    "description": "查看各城市的附魔效果和所需材料",
+    "filters": {
+      "city": "城市",
+      "position": "装备位置",
+      "attribute": "属性",
+      "pageSize": "每页显示",
+      "selectCity": "全部城市",
+      "selectPosition": "全部位置",
+      "searchAttribute": "搜索属性名称..."
+    },
+    "columns": {
+      "city": "城市",
+      "position": "装备位置",
+      "attribute": "属性",
+      "white": "白色",
+      "blue": "蓝色",
+      "purple": "紫色",
+      "orange": "橙色",
+      "costItems": "材料消耗"
+    },
+    "stats": {
+      "total": "总计",
+      "filtered": "筛选结果",
+      "cities": "城市数量",
+      "items": "条附魔",
+      "cityCount": "个"
+    }
   },
   "game": {
     "Race1": "天使",
