@@ -297,21 +297,28 @@ const loadEnchants = async () => {
     loading.value = true
     // 根据当前语言加载对应的数据文件
     const locale = i18nStore.currentLocale
-    const dataPath = `/src/data/enchant/${locale}.json`
     
-    let response = await fetch(dataPath)
-    
-    // 如果当前语言的数据文件不存在，回退到中文
-    if (!response.ok && locale !== 'zh-CN') {
+    let data
+    try {
+      // 尝试加载当前语言的数据文件
+      if (locale === 'en-US') {
+        const response = await import('@/data/enchant/en-US.json')
+        data = response.default
+      } else if (locale === 'pt-BR') {
+        const response = await import('@/data/enchant/pt-BR.json')
+        data = response.default
+      } else {
+        // 默认加载中文数据
+        const response = await import('@/data/enchant/zh-CN.json')
+        data = response.default
+      }
+    } catch (error) {
+      // 如果当前语言的数据文件不存在，回退到中文
       console.warn(`Enchant data for ${locale} not found, falling back to zh-CN`)
-      response = await fetch('/src/data/enchant/zh-CN.json')
+      const response = await import('@/data/enchant/zh-CN.json')
+      data = response.default
     }
     
-    if (!response.ok) {
-      throw new Error('Failed to load enchant data')
-    }
-    
-    const data = await response.json()
     enchants.value = data
   } catch (error) {
     console.error('Error loading enchant data:', error)
