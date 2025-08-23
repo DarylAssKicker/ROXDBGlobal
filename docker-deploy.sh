@@ -77,13 +77,24 @@ if [ "$DEPLOY_METHOD" = "compose" ]; then
         exit 1
     fi
     
+    # 构建镜像
+    echo "构建镜像..."
+    docker-compose -f $COMPOSE_FILE build
+    
+    if [ $? -eq 0 ]; then
+        echo "镜像构建成功!"
+    else
+        echo "镜像构建失败!"
+        exit 1
+    fi
+    
     # 停止现有服务
     echo "停止现有服务..."
     docker-compose -f $COMPOSE_FILE down 2>/dev/null || true
     
-    # 构建并启动服务
-    echo "构建并启动服务..."
-    docker-compose -f $COMPOSE_FILE up -d --build
+    # 启动服务
+    echo "启动服务..."
+    docker-compose -f $COMPOSE_FILE up -d
     
     if [ $? -eq 0 ]; then
         echo "部署成功!"
@@ -100,20 +111,25 @@ else
     # 使用 docker 命令部署
     echo "使用 Docker 命令部署..."
     
-    # 构建镜像
-    echo "正在构建 Docker 镜像..."
+    # 设置变量
     if [ "$ENVIRONMENT" = "dev" ]; then
-        docker build -f Dockerfile.dev --target development -t rox-web2:dev .
         IMAGE_TAG="rox-web2:dev"
         CONTAINER_NAME="rox-web2-dev"
         PORT_MAPPING="-p 3000:3000 -p 24678:24678"
         ENV_VARS="-e NODE_ENV=development"
     else
-        docker build -t rox-web2:latest .
         IMAGE_TAG="rox-web2:latest"
         CONTAINER_NAME="rox-web2"
         PORT_MAPPING="-p 3000:80"
         ENV_VARS="-e NODE_ENV=production"
+    fi
+    
+    # 构建镜像
+    echo "正在构建 Docker 镜像..."
+    if [ "$ENVIRONMENT" = "dev" ]; then
+        docker build -f Dockerfile.dev --target development -t $IMAGE_TAG .
+    else
+        docker build -t $IMAGE_TAG .
     fi
     
     if [ $? -eq 0 ]; then
