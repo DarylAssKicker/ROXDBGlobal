@@ -20,7 +20,9 @@
     "error": "Erro",
     "success": "Sucesso",
     "total": "Total {count} itens",
-    "page": "Página {current} de {total}"
+    "page": "Página {current} de {total}",
+    "statistics": "Estatísticas",
+    "visitCount": "Contagem de Visitas"
   },
   "navigation": {
     "home": "Início",

@@ -22,6 +22,7 @@
     "total": "Total {count} items",
     "page": "Page {current} of {total}",
     "statistics": "Statistics",
+    "visitCount": "Visit Count",
     "unknown": "Unknown"
   },
   "navigation": {

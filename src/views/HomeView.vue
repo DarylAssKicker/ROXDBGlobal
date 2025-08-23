@@ -54,12 +54,12 @@
           <div class="space-y-2">
             <div class="flex items-center space-x-3">
               <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span class="text-gray-600 text-sm">en-US:</span>
+              <span class="text-gray-600 text-sm">English:</span>
               <span class="text-gray-700 font-medium">Natsu</span>
             </div>
             <div class="flex items-center space-x-3">
               <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span class="text-gray-600 text-sm">pt-BR:</span>
+              <span class="text-gray-600 text-sm">Português:</span>
               <span class="text-gray-700 font-medium">Andyz0x</span>
             </div>
           </div>
@@ -102,7 +102,7 @@
       <h2 class="text-2xl font-bold text-gray-900 mb-6">
         {{ $t('common.statistics') }}
       </h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
         <div class="text-center">
           <div class="text-3xl font-bold text-primary-600">
             {{ dataStore.monstersCount.toLocaleString() }}
@@ -133,13 +133,21 @@
             {{ $t('common.language') }}
           </div>
         </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-primary-600">
+            {{ visitCount.toLocaleString() }}
+          </div>
+          <div class="text-sm text-gray-500 mt-1">
+            {{ $t('common.visitCount') }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { 
   GlobeAltIcon,
   UserGroupIcon,
@@ -151,7 +159,8 @@ import {
   HeartIcon,
   QuestionMarkCircleIcon,
   WrenchScrewdriverIcon,
-  HomeIcon
+  HomeIcon,
+  EyeIcon
 } from '@heroicons/vue/24/outline'
 import { useI18nStore } from '@/stores/i18n'
 import { useDataStore } from '@/stores/data'
@@ -160,6 +169,29 @@ const i18nStore = useI18nStore()
 const dataStore = useDataStore()
 
 const currentLanguage = computed(() => i18nStore.currentLanguage)
+
+// 访问统计
+const visitCount = ref(0)
+
+// 获取访问次数
+const getVisitCount = () => {
+  const count = localStorage.getItem('roxdb-visit-count')
+  return count ? parseInt(count) : 0
+}
+
+// 增加访问次数
+const incrementVisitCount = () => {
+  const currentCount = getVisitCount()
+  const newCount = currentCount + 1
+  localStorage.setItem('roxdb-visit-count', newCount.toString())
+  visitCount.value = newCount
+}
+
+// 组件挂载时初始化访问统计
+onMounted(() => {
+  visitCount.value = getVisitCount()
+  incrementVisitCount()
+})
 
 
 

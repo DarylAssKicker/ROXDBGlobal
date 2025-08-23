@@ -22,6 +22,7 @@
     "total": "共 {count} 条",
     "page": "第 {current} 页，共 {total} 页",
     "statistics": "数据统计",
+    "visitCount": "访问次数",
     "unknown": "未知"
   },
   "navigation": {
