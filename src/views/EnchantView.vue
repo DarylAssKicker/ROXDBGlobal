@@ -220,12 +220,13 @@
             <button 
               v-for="page in visiblePages"
               :key="page"
-              @click="goToPage(page)"
+              @click="typeof page === 'number' ? goToPage(page) : undefined"
               :class="[
                 'px-3 py-1 text-sm border rounded-md',
                 page === currentPage 
                   ? 'bg-blue-600 text-white border-blue-600' 
-                  : 'border-gray-300 hover:bg-gray-50'
+                  : 'border-gray-300 hover:bg-gray-50',
+                typeof page === 'string' ? 'cursor-default' : 'cursor-pointer'
               ]"
             >
               {{ page }}
