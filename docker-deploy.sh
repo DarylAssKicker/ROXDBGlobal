@@ -2,7 +2,8 @@
 
 # ROX Database V2 Docker 部署脚本
 
-USAGE="使用方法: $0 [compose|docker] [dev|prod]
+USAGE=$(cat << 'EOF'
+使用方法: $0 [compose|docker] [dev|prod]
   compose: 使用 docker-compose 部署
   docker:  使用 docker 命令部署
   dev:     开发环境模式
@@ -11,7 +12,9 @@ USAGE="使用方法: $0 [compose|docker] [dev|prod]
 示例:
   $0 compose dev    # 使用 docker-compose 开发环境
   $0 compose        # 使用 docker-compose 生产环境
-  $0 docker         # 使用 docker 命令生产环境"
+  $0 docker         # 使用 docker 命令生产环境
+EOF
+)
 
 DEPLOY_METHOD=${1:-compose}
 ENVIRONMENT=${2:-prod}

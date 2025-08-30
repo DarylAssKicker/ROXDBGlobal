@@ -141,6 +141,14 @@
             {{ $t('common.visitCount') }}
           </div>
         </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-green-600">
+            {{ dailyVisitCount.toLocaleString() }}
+          </div>
+          <div class="text-sm text-gray-500 mt-1">
+            今日访问
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -164,6 +172,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useI18nStore } from '@/stores/i18n'
 import { useDataStore } from '@/stores/data'
+import axios from 'axios'
 
 const i18nStore = useI18nStore()
 const dataStore = useDataStore()
@@ -172,25 +181,59 @@ const currentLanguage = computed(() => i18nStore.currentLanguage)
 
 // 访问统计
 const visitCount = ref(0)
+const dailyVisitCount = ref(0)
+const isNewVisit = ref(false)
+
+// API基础URL配置
+const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:3001'
 
 // 获取访问次数
-const getVisitCount = () => {
-  const count = localStorage.getItem('roxdb-visit-count')
-  return count ? parseInt(count) : 0
+const getVisitCount = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/stats/visits`)
+    return {
+      visits: response.data.visits || 0,
+      dailyVisits: response.data.dailyVisits || 0,
+      date: response.data.date
+    }
+  } catch (error) {
+    console.error('Failed to get visit count:', error)
+    return { visits: 0, dailyVisits: 0, date: null }
+  }
 }
 
-// 增加访问次数
-const incrementVisitCount = () => {
-  const currentCount = getVisitCount()
-  const newCount = currentCount + 1
-  localStorage.setItem('roxdb-visit-count', newCount.toString())
-  visitCount.value = newCount
+// 增加访问次数（基于IP去重）
+const incrementVisitCount = async () => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/api/stats/visit`)
+    visitCount.value = response.data.visits || 0
+    isNewVisit.value = response.data.newVisit || false
+    
+    // 如果是新访问，显示欢迎消息
+    if (isNewVisit.value) {
+      console.log('欢迎新访客！您的IP:', response.data.clientIP)
+    } else {
+      console.log('欢迎回来！今天您已经访问过了')
+    }
+  } catch (error) {
+    console.error('Failed to increment visit count:', error)
+  }
 }
 
 // 组件挂载时初始化访问统计
-onMounted(() => {
-  visitCount.value = getVisitCount()
-  incrementVisitCount()
+onMounted(async () => {
+  // 先获取当前统计数据
+  const stats = await getVisitCount()
+  visitCount.value = stats.visits
+  dailyVisitCount.value = stats.dailyVisits
+  
+  // 然后尝试增加访问次数（如果是新访问才会增加）
+  await incrementVisitCount()
+  
+  // 重新获取更新后的统计数据
+  const updatedStats = await getVisitCount()
+  visitCount.value = updatedStats.visits
+  dailyVisitCount.value = updatedStats.dailyVisits
 })
 
 
