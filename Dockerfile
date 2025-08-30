@@ -1,5 +1,5 @@
-# 使用官方Node.js运行时作为基础镜像
-FROM node:18-alpine as build-stage
+# 使用官方Node.js运行时作为基础镜像（使用具体版本避免重复拉取）
+FROM node:18.19.0-alpine as build-stage
 
 # 设置工作目录
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # 生产阶段
-FROM nginx:alpine as production-stage
+FROM nginx:1.25-alpine as production-stage
 
 # 复制构建的文件到nginx目录
 COPY --from=build-stage /app/dist /usr/share/nginx/html
