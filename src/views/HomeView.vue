@@ -55,7 +55,7 @@
             <div class="flex items-center space-x-3">
               <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
               <span class="text-gray-600 text-sm">English:</span>
-              <span class="text-gray-700 font-medium">Natsu</span>
+              <span class="text-gray-700 font-medium">Dayrl,AI</span>
             </div>
             <div class="flex items-center space-x-3">
               <div class="w-2 h-2 bg-green-500 rounded-full"></div>

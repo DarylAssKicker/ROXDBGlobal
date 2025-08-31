@@ -34,17 +34,19 @@ redisClient.on('error', (err) => {
 redisClient.connect().catch(console.error);
 
 // 访问统计 API
-// 获取访问次数
+// 获取访问次数（按每日IP去重统计）
 app.get('/api/stats/visits', async (req, res) => {
   try {
-    const visits = await redisClient.get('ROXDBGlobal:site:visits') || '0';
+    const totalVisits = await redisClient.get('ROXDBGlobal:site:visits') || '0';
     const today = new Date().toISOString().split('T')[0];
     const dailyVisits = await redisClient.get(`ROXDBGlobal:daily:visits:${today}`) || '0';
     
     res.json({ 
-      visits: parseInt(visits),
+      totalVisits: parseInt(totalVisits),
       dailyVisits: parseInt(dailyVisits),
-      date: today
+      date: today,
+      // 为了兼容性保留原字段
+      visits: parseInt(totalVisits)
     });
   } catch (error) {
     console.error('Error getting visits:', error);
@@ -52,75 +54,97 @@ app.get('/api/stats/visits', async (req, res) => {
   }
 });
 
-// 增加访问次数（基于IP去重）
+// 记录访问次数（每次访问都记录，但客户端显示时按每日去重）
 app.post('/api/stats/visit', async (req, res) => {
   try {
     // 获取客户端IP地址
     const clientIP = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
     const cleanIP = clientIP.replace(/^::ffff:/, '').replace(/:\d+$/, '');
-    const visitKey = `ROXDBGlobal:visit:${cleanIP}`;
     const today = new Date().toISOString().split('T')[0];
-    const dailyKey = `ROXDBGlobal:daily:visits:${today}`;
+    const dailyVisitKey = `ROXDBGlobal:daily:ip:${cleanIP}:${today}`;
     const ipStatsKey = `ROXDBGlobal:ip:stats:${cleanIP}`;
     const ipListKey = 'ROXDBGlobal:ip:list';
-    const ipDailyKey = `ROXDBGlobal:ip:daily:${cleanIP}:${today}`;
+    const currentTime = new Date().toISOString();
     
-    // 检查该IP今天是否已经访问过
-    const hasVisited = await redisClient.exists(visitKey);
+    // 检查该IP今天是否已经访问过（用于去重统计）
+    const hasVisitedToday = await redisClient.exists(dailyVisitKey);
+    let isNewDailyVisit = false;
     
-    if (!hasVisited) {
-      // 设置IP访问标记，24小时过期
-      await redisClient.setEx(visitKey, 86400, '1');
-      // 增加总访问量（持久化）
-      const visits = await redisClient.incr('ROXDBGlobal:site:visits');
-      // 确保总访问量永不过期
+    if (!hasVisitedToday) {
+      // 标记该IP今天已访问，设置过期时间到明天凌晨
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      const secondsUntilTomorrow = Math.floor((tomorrow.getTime() - Date.now()) / 1000);
+      
+      await redisClient.setEx(dailyVisitKey, secondsUntilTomorrow, '1');
+      
+      // 增加总访问量（按每日IP去重）
+      await redisClient.incr('ROXDBGlobal:site:visits');
       await redisClient.persist('ROXDBGlobal:site:visits');
       
-      // 增加今日访问量
+      // 增加今日访问量（按每日IP去重）
+      const dailyKey = `ROXDBGlobal:daily:visits:${today}`;
       await redisClient.incr(dailyKey);
-      // 设置今日访问量过期时间（7天后过期，用于统计）
-      await redisClient.expire(dailyKey, 604800);
+      await redisClient.expire(dailyKey, 604800); // 7天后过期
       
-      // 增加该IP的今日访问次数
-      await redisClient.incr(ipDailyKey);
-      // 设置IP今日访问量过期时间（48小时后过期）
-      await redisClient.expire(ipDailyKey, 172800);
-      
-      // 记录IP访问统计（持久化存储）
-      const currentTime = new Date().toISOString();
-      const ipStats = await redisClient.hGetAll(ipStatsKey);
-      
-      if (Object.keys(ipStats).length === 0) {
-        // 首次访问该IP - 初始化持久化数据
-        await redisClient.hSet(ipStatsKey, {
-          ip: cleanIP,
-          visitCount: '1',
-          firstVisit: currentTime,
-          lastVisit: currentTime
-        });
-        // 添加到IP列表（持久化）
-        await redisClient.sAdd(ipListKey, cleanIP);
-      } else {
-        // 增加访问次数，更新最后访问时间（持久化更新）
-        await redisClient.hSet(ipStatsKey, {
-          visitCount: (parseInt(ipStats.visitCount) + 1).toString(),
-          lastVisit: currentTime
-        });
-      }
-      
-      // 确保IP统计数据永不过期（持久化）
-      await redisClient.persist(ipStatsKey);
-      await redisClient.persist(ipListKey);
-      
-      res.json({ visits, newVisit: true, clientIP: cleanIP });
-    } else {
-      // 获取当前访问量但不增加
-      const visits = await redisClient.get('ROXDBGlobal:site:visits') || '0';
-      res.json({ visits: parseInt(visits), newVisit: false, clientIP: cleanIP });
+      isNewDailyVisit = true;
     }
+    
+    // 无论是否是新的每日访问，都要记录IP的访问次数
+    const ipStats = await redisClient.hGetAll(ipStatsKey);
+    
+    if (Object.keys(ipStats).length === 0) {
+      // 首次访问该IP - 初始化持久化数据
+      await redisClient.hSet(ipStatsKey, {
+        ip: cleanIP,
+        totalVisits: '1',
+        firstVisit: currentTime,
+        lastVisit: currentTime
+      });
+      // 添加到IP列表（持久化）
+      await redisClient.sAdd(ipListKey, cleanIP);
+    } else {
+      // 增加总访问次数，更新最后访问时间（持久化更新）
+      // 兼容旧数据：支持 visitCount 字段迁移到 totalVisits
+      const currentTotal = parseInt(ipStats.totalVisits || ipStats.visitCount || '0');
+      await redisClient.hSet(ipStatsKey, {
+        totalVisits: (currentTotal + 1).toString(),
+        lastVisit: currentTime
+      });
+    }
+    
+    // 记录该IP今日的访问次数（不去重）
+    const ipDailyKey = `ROXDBGlobal:ip:daily:${cleanIP}:${today}`;
+    await redisClient.incr(ipDailyKey);
+    await redisClient.expire(ipDailyKey, 172800); // 48小时后过期
+    
+    // 确保IP统计数据永不过期（持久化）
+    await redisClient.persist(ipStatsKey);
+    await redisClient.persist(ipListKey);
+    
+    // 获取当前统计数据
+    const totalVisits = await redisClient.get('ROXDBGlobal:site:visits') || '0';
+    const dailyVisits = await redisClient.get(`ROXDBGlobal:daily:visits:${today}`) || '0';
+    
+    // 获取IP统计，兼容旧字段名
+    const updatedIpStats = await redisClient.hGetAll(ipStatsKey);
+    const ipTotalVisits = updatedIpStats.totalVisits || updatedIpStats.visitCount || '1';
+    const ipDailyVisits = await redisClient.get(ipDailyKey) || '1';
+    
+    res.json({ 
+      totalVisits: parseInt(totalVisits),
+      dailyVisits: parseInt(dailyVisits),
+      clientIP: cleanIP,
+      isNewDailyVisit,
+      ipStats: {
+        totalVisits: parseInt(ipTotalVisits),
+        dailyVisits: parseInt(ipDailyVisits)
+      }
+    });
   } catch (error) {
-    console.error('Error incrementing visits:', error);
-    res.status(500).json({ error: 'Failed to increment visit count' });
+    console.error('Error recording visit:', error);
+    res.status(500).json({ error: 'Failed to record visit' });
   }
 });
 
@@ -141,9 +165,12 @@ app.get('/api/stats/ip-visits', async (req, res) => {
         // 获取今日访问次数
         const todayVisits = await redisClient.get(dailyVisitKey) || '0';
         
+        // 兼容旧数据：支持 visitCount 字段迁移到 totalVisits
+        const totalVisits = parseInt(stats.totalVisits || stats.visitCount || '0');
+        
         ipStats.push({
           ip: stats.ip,
-          visitCount: parseInt(stats.visitCount),
+          totalVisits: totalVisits,
           todayVisits: parseInt(todayVisits),
           firstVisit: stats.firstVisit,
           lastVisit: stats.lastVisit
@@ -152,7 +179,7 @@ app.get('/api/stats/ip-visits', async (req, res) => {
     }
     
     // 按总访问次数降序排序
-    ipStats.sort((a, b) => b.visitCount - a.visitCount);
+    ipStats.sort((a, b) => b.totalVisits - a.totalVisits);
     
     res.json({ 
       totalIPs: ipStats.length,
@@ -188,7 +215,7 @@ app.get('/api/stats/persistence-status', async (req, res) => {
         ip,
         isPersistent: ttl === -1,
         ttl: ttl,
-        visitCount: stats.visitCount || '0'
+        totalVisits: stats.totalVisits || stats.visitCount || '0'
       });
     }
     
